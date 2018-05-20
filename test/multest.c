@@ -1,3 +1,4 @@
+#include<assert.h>
 #include<stddef.h>
 
 #include"f2pmul.h"
@@ -10,4 +11,7 @@ int main( void ) {
 		y.data[i] = -1;
 	}
 	f2pmul( &p, &x, &y );
+	for ( size_t i = 0; i != 8; ++i ) {
+		assert( p.data[i] == 0x5555555555555555 );
+	}
 }
