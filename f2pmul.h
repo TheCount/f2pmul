@@ -39,14 +39,14 @@ typedef struct F2PMul_256 {
 	) )
 
 #define f2pmul_256_mid( x ) ( _Generic( ( x ), \
-		const F2PMul_256 *: ( const F2PMul_128 * ) ( ( ( const char * ) ( x ) ) + 8 ), \
-		F2PMul_256 *: ( F2PMul_128 * ) ( ( ( char * ) ( x ) ) + 8 ), \
+		const F2PMul_256 *: ( const F2PMul_128 * ) ( const char * ) &( x )->data[1], \
+		F2PMul_256 *: ( F2PMul_128 * ) ( char * ) &( x )->data[1], \
 		default: f2pmul_abort() \
 	) )
 
 #define f2pmul_256_high( x ) ( _Generic( ( x ), \
-		const F2PMul_256 *: ( const F2PMul_128 * ) ( ( ( const char * ) ( x ) ) + 16 ), \
-		F2PMul_256 *: ( F2PMul_128 * ) ( ( ( char * ) ( x ) ) + 16 ), \
+		const F2PMul_256 *: ( const F2PMul_128 * ) ( const char * ) &( x )->data[2], \
+		F2PMul_256 *: ( F2PMul_128 * ) ( char * ) &( x )->data[2], \
 		default: f2pmul_abort() \
 	) )
 
@@ -66,14 +66,14 @@ typedef struct F2PMul_512 {
 	) )
 
 #define f2pmul_512_mid( x ) ( _Generic( ( x ), \
-		const F2PMul_512 *: ( const F2PMul_256 * ) ( ( ( char * ) ( x ) ) + 16 ), \
-		F2PMul_512 *: ( F2PMul_256 * ) ( ( ( char * ) ( x ) ) + 16 ), \
+		const F2PMul_512 *: ( const F2PMul_256 * ) ( char * ) &( x )->data[2], \
+		F2PMul_512 *: ( F2PMul_256 * ) ( char * ) &( x )->data[2], \
 		default: f2pmul_abort() \
 	) )
 
 #define f2pmul_512_high( x ) ( _Generic( ( x ), \
-		const F2PMul_512 *: ( const F2PMul_256 * ) ( ( ( char * ) ( x ) ) + 32 ), \
-		F2PMul_512 *: ( F2PMul_256 * ) ( ( ( char * ) ( x ) ) + 32 ), \
+		const F2PMul_512 *: ( const F2PMul_256 * ) ( char * ) &( x )->data[4], \
+		F2PMul_512 *: ( F2PMul_256 * ) ( char * ) &( x )->data[4], \
 		default: f2pmul_abort() \
 	) )
 
