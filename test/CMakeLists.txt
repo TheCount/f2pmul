@@ -6,4 +6,5 @@ macro( test TESTNAME )
 	add_test( ${TESTNAME}-Test ${TESTNAME}-test )
 endmacro( test )
 
+test( modmatrix )
 test( multest )
