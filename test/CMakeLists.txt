@@ -7,4 +7,5 @@ macro( test TESTNAME )
 endmacro( test )
 
 test( modmatrix )
+test( modtest )
 test( multest )

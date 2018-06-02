@@ -245,4 +245,37 @@ static inline void f2pmul_256_256_512( F2PMul_512 * restrict prod, const F2PMul_
 	f2pmul_add( prodMid, &acc );
 }
 
+/**
+ * Reduces an F2 polynomials of degree 255 or lower modulo x^251 + x^7 + x^4 + x^2 + 1 in place.
+ *
+ * @param p Pointer to polynomial to be reduced.
+ */
+static inline void f2pmul_256_mod_251( F2PMul_256 * p ) {
+	uint64_t acc = p->data[3] >> 59;
+	acc = acc ^ ( acc << 2 ) ^ ( acc << 4 ) ^ ( acc << 7 );
+	p->data[0] ^= acc;
+	p->data[3] &= ~( ~0ull << 59 );
+}
+
+/**
+ * Reduces an F2 polynomial of degree 501 or lower modulo x^251 + x^7 + x^4 + x^2 + 1.
+ *
+ * @param dest Pointer to location to store the reduced polynomial.
+ * @param src Pointer to source polynomial.
+ * 	For a correct result, its degree must not exceed 501.
+ */
+static inline void f2pmul_502_mod_251( F2PMul_256 * restrict dest, const F2PMul_512 * restrict src ) {
+	uint64_t redux0 = ( src->data[3] >> 59 ) | ( src->data[4] << 5 );
+	uint64_t redux1 = ( src->data[4] >> 59 ) | ( src->data[5] << 5 );
+	uint64_t redux2 = ( src->data[5] >> 59 ) | ( src->data[6] << 5 );
+	uint64_t redux3 = ( src->data[6] >> 59 ) | ( src->data[7] << 5 );
+	dest->data[0] = src->data[0] ^ redux0 ^ ( redux0 << 2 ) ^ ( redux0 << 4 ) ^ ( redux0 << 7 );
+	dest->data[1] = src->data[1] ^ ( redux0 >> 62 ) ^ ( redux0 >> 60 ) ^ ( redux0 >> 57 ) ^ redux1 ^ ( redux1 << 2 ) ^ ( redux1 << 4 ) ^ ( redux1 << 7 );
+	dest->data[2] = src->data[2] ^ ( redux1 >> 62 ) ^ ( redux1 >> 60 ) ^ ( redux1 >> 57 ) ^ redux2 ^ ( redux2 << 2 ) ^ ( redux2 << 4 ) ^ ( redux2 << 7 );
+	dest->data[3] = ( src->data[3] & ~( ~0ull << 59 ) ) ^ ( redux2 >> 62 ) ^ ( redux2 >> 60 ) ^ ( redux2 >> 57 ) ^ redux3 ^ ( redux3 << 2 ) ^ ( redux3 << 4 ) ^ ( redux3 << 7 );
+	uint64_t overspill = ( dest->data[3] >> 59 ) | ( ( redux3 >> 57 ) << 5 );
+	dest->data[0] ^= overspill ^ ( overspill << 2 ) ^ ( overspill << 4 ) ^ ( overspill << 7 );
+	dest->data[3] &= ~( ~0ull << 59 );
+}
+
 #endif
